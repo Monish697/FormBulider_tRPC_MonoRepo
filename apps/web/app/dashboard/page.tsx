@@ -16,7 +16,9 @@ export default function DashboardPage() {
   
   const createFormMutation = trpc.form.create.useMutation({
     onSuccess: (data) => {
-      router.push(`/builder?id=${data.id}`);
+      if (data?.id) {
+        router.push(`/builder?id=${data.id}`);
+      }
     },
   });
 

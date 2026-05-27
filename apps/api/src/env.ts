@@ -5,6 +5,7 @@ const envSchema = z.object({
   NODE_ENV: z.enum(["development", "prod"]).default("development"),
   BASE_URL: z.string().default("http://localhost:8000"),
   WEB_URL: z.string().default("http://localhost:3000"),
+  JWT_SECRET: z.string().min(1, "JWT_SECRET is required"),
 });
 
 function createEnv(env: NodeJS.ProcessEnv) {

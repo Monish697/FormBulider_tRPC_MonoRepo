@@ -5,6 +5,7 @@ import { formsTable } from "@repo/database/models/form";
 import { usersTable } from "@repo/database/models/user";
 import PublicFormClient from "./PublicFormClient";
 import JWT from "jsonwebtoken";
+import { env } from "../../../env";
 
 export default async function PublicFormPage(props: { params: Promise<{ slug: string }> }) {
   const slug = (await props.params).slug;
@@ -37,7 +38,7 @@ export default async function PublicFormPage(props: { params: Promise<{ slug: st
     }
 
     try {
-      const decoded = JWT.verify(token, process.env.JWT_SECRET as string) as string;
+      const decoded = JWT.verify(token, env.JWT_SECRET) as string;
       const user = await db.select().from(usersTable).where(eq(usersTable.id, decoded)).then(res => res[0]);
 
       if (!user) {
