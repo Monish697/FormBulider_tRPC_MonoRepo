@@ -5,7 +5,6 @@ import cookieParser from "cookie-parser";
 
 import * as trpcExpress from "@trpc/server/adapters/express";
 import { generateOpenApiDocument, createOpenApiExpressMiddleware } from "trpc-to-openapi";
-import { apiReference } from "@scalar/express-api-reference";
 
 import { serverRouter, createContext } from "@repo/trpc/server";
 
@@ -42,7 +41,10 @@ app.get("/openapi.json", (req, res) => {
 });
 
 logger.debug(`docs: ${env.BASE_URL}/docs`);
-app.use("/docs", apiReference({ url: "/openapi.json" }));
+app.use("/docs", async (req, res, next) => {
+  const { apiReference } = await import("@scalar/express-api-reference");
+  return apiReference({ url: "/openapi.json" })(req, res, next);
+});
 
 app.use(
   "/api",
