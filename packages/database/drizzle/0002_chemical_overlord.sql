@@ -1,0 +1,1 @@
+ALTER TABLE "forms" ADD COLUMN "allowed_emails" jsonb DEFAULT '[]'::jsonb;
