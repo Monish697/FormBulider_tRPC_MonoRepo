@@ -7,6 +7,8 @@ import PublicFormClient from "./PublicFormClient";
 import JWT from "jsonwebtoken";
 import { env } from "../../../env";
 
+export const dynamic = "force-dynamic";
+
 export default async function PublicFormPage(props: { params: Promise<{ slug: string }> }) {
   const slug = (await props.params).slug;
   const cookieStore = await cookies();
