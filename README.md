@@ -1,102 +1,84 @@
-# Turborepo starter
+# Interactive Form Builder Monorepo
 
-This Turborepo starter is maintained by the Turborepo core team.
+> **Accomplished the creation of a full-stack, scalable interactive form builder application, as measured by the ability for users to seamlessly create, deploy, and securely restrict access to public, private, and unlisted forms, by architecting a modern monorepo utilizing Next.js, Express, tRPC, Drizzle ORM, and PostgreSQL.**
 
-## Using this example
+![Database ER Diagram](Asset/ER-Diagram.png)
 
-Run the following command:
+## Overview
 
-```sh
-npx create-turbo@latest
+This project is a modern, full-stack monorepo designed to help users dynamically build, customize, and deploy interactive forms. The robust architecture strictly separates the frontend client (Next.js) from the backend API (Express) while maintaining 100% end-to-end type safety using tRPC.
+
+### Core Features
+- **Dynamic Form Builder:** A rich UI allowing users to visually construct forms with various input types.
+- **Access Control:** Granular control over form visibility:
+  - **Public:** Open for anyone to submit.
+  - **Private:** Strictly restricted to a specific list of allowed emails via JWT authentication.
+  - **Unlisted/Draft:** Kept strictly offline for editing only.
+- **End-to-End Type Safety:** tRPC ensures that the data moving between the frontend and database perfectly matches the expected schemas.
+- **OpenAPI Documentation:** The API self-documents and provides an interactive Scalar/OpenAPI dashboard at `/docs`.
+
+---
+
+## Architecture & Tech Stack
+
+This repository is structured as a [Turborepo](https://turborepo.org/) to easily share packages across apps.
+
+- **Frontend (`apps/web`):** Next.js 14, React, Tailwind CSS, Zustand, tRPC Client.
+- **Backend (`apps/api`):** Express.js, tRPC Server, JWT Authentication.
+- **Database Layer (`packages/database`):** PostgreSQL, Drizzle ORM.
+- **Shared Logic (`packages/trpc`):** Shared tRPC routes and Zod validation schemas.
+
+---
+
+## Running Locally
+
+To get this project running on your local machine, follow these steps:
+
+### 1. Prerequisites
+Ensure you have the following installed:
+- [Node.js](https://nodejs.org/) (v18 or higher)
+- [pnpm](https://pnpm.io/) (Package manager)
+- [Docker](https://www.docker.com/) & Docker Compose (For the database)
+
+### 2. Environment Variables
+Create a `.env` file at the root of the project (you can copy the `.env.example` file if available) and add the following:
+
+```env
+DATABASE_URL=postgresql://postgres:postgres@localhost:5432/dev
+NEXT_PUBLIC_API_URL=http://localhost:8000/trpc
+WEB_URL=http://localhost:3000
+DOC_URL=http://localhost:4000
+JWT_SECRET=your_super_secret_jwt_string
+SALT=12
+NODE_ENV="development"
 ```
 
-## What's inside?
-
-This Turborepo includes the following packages/apps:
-
-### Apps and Packages
-
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
-
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
-
-### Utilities
-
-This Turborepo has some additional tools already setup for you:
-
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-
-### Build
-
-To build all apps and packages, run the following command:
-
-```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build
-yarn dlx turbo build
-pnpm exec turbo build
+### 3. Start the Database
+Spin up the local PostgreSQL database using Docker Compose:
+```bash
+docker-compose up -d
 ```
 
-You can build a specific package by using a [filter](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters):
-
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build --filter=docs
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build --filter=docs
-yarn exec turbo build --filter=docs
-pnpm exec turbo build --filter=docs
+### 4. Install Dependencies
+Install all required Node modules across the monorepo:
+```bash
+pnpm install
 ```
 
-### Develop
-
-To develop all apps and packages, run the following command:
-
+### 5. Push the Database Schema
+Ensure the Postgres database is completely up to date with your Drizzle schemas:
+```bash
+pnpm run db:push
 ```
-cd my-turborepo
+*(Note: depending on your setup, you can also run `pnpm run db:generate` and `pnpm run db:migrate` if using migrations)*
 
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev
-yarn exec turbo dev
-pnpm exec turbo dev
+### 6. Start the Development Server
+Use Turborepo to concurrently start the Next.js frontend and Express backend:
+```bash
+pnpm run dev
 ```
 
-You can develop a specific package by using a [filter](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters):
-
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev --filter=web
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev --filter=web
-yarn exec turbo dev --filter=web
-pnpm exec turbo dev --filter=web
-```
-
-## Useful Links
-
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turborepo.com/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.com/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.com/docs/reference/configuration)
-- [CLI Usage](https://turborepo.com/docs/reference/command-line-reference)
-
-## Learnign tRPC
+### 7. Access the Apps
+- **Frontend App:** `http://localhost:3000`
+- **Backend API:** `http://localhost:8000/trpc`
+- **Interactive API Docs:** `http://localhost:8000/docs`
